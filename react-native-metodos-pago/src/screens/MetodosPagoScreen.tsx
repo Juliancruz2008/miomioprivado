@@ -20,6 +20,7 @@ export function MetodosPagoScreen() {
   const [cargando, setCargando] = useState(true);
   const [refrescando, setRefrescando] = useState(false);
   const [mensaje, setMensaje] = useState('');
+  const [alerta, setAlerta] = useState<{ tipo: 'error' | 'success'; texto: string } | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [guardando, setGuardando] = useState(false);
   const [editando, setEditando] = useState<MetodoPago | null>(null);
@@ -30,6 +31,7 @@ export function MetodosPagoScreen() {
   const cargar = useCallback(async (esRefresco = false) => {
     esRefresco ? setRefrescando(true) : setCargando(true);
     setMensaje('');
+    setAlerta(null);
     try {
       setModoDemo(await estaEnModoDemo());
       setMetodos(await listarMetodosPago());
@@ -61,7 +63,7 @@ export function MetodosPagoScreen() {
   const guardar = async () => {
     const numero = form.numero.trim();
     if (numero.replace(/\s/g, '').length < 4) {
-      Alert.alert('Datos incompletos', 'Ingresa al menos cuatro dígitos para el número o cuenta.');
+      setAlerta({ tipo: 'error', texto: 'Ingresa al menos cuatro dígitos para el número o cuenta.' });
       return;
     }
     setGuardando(true);
@@ -69,9 +71,10 @@ export function MetodosPagoScreen() {
       if (editando) await actualizarMetodoPago(editando.id, { tipo: form.tipo, numero });
       else await crearMetodoPago({ tipo: form.tipo, numero, estado: true });
       setModalVisible(false);
+      setAlerta({ tipo: 'success', texto: editando ? 'Método actualizado correctamente.' : 'Método agregado correctamente.' });
       await cargar();
     } catch (error) {
-      Alert.alert('No se pudo guardar', error instanceof Error ? error.message : 'Inténtalo de nuevo.');
+      setAlerta({ tipo: 'error', texto: error instanceof Error ? error.message : 'No se pudo guardar el método.' });
     } finally {
       setGuardando(false);
     }
@@ -93,9 +96,10 @@ export function MetodosPagoScreen() {
   const eliminar = async (metodo: MetodoPago) => {
     try {
       await eliminarMetodoPago(metodo.id);
+      setAlerta({ tipo: 'success', texto: 'Método eliminado correctamente.' });
       await cargar();
     } catch (error) {
-      Alert.alert('No se pudo eliminar', error instanceof Error ? error.message : 'Inténtalo de nuevo.');
+      setAlerta({ tipo: 'error', texto: error instanceof Error ? error.message : 'No se pudo eliminar el método.' });
     }
   };
 
@@ -103,9 +107,10 @@ export function MetodosPagoScreen() {
   const cambiarEstado = async (metodo: MetodoPago) => {
     try {
       await actualizarMetodoPago(metodo.id, { estado: !metodo.estado });
+      setAlerta({ tipo: 'success', texto: `Método ${metodo.estado ? 'desactivado' : 'activado'} correctamente.` });
       await cargar();
     } catch (error) {
-      Alert.alert('No se pudo actualizar', error instanceof Error ? error.message : 'Inténtalo de nuevo.');
+      setAlerta({ tipo: 'error', texto: error instanceof Error ? error.message : 'No se pudo actualizar el método.' });
     }
   };
 
@@ -117,6 +122,7 @@ export function MetodosPagoScreen() {
         <TouchableOpacity style={styles.addButton} onPress={abrirNuevo} accessibilityLabel="Agregar método de pago"><Text style={styles.addText}>+ Agregar</Text></TouchableOpacity>
       </View>
 
+      {alerta ? <View style={[styles.alertBox, alerta.tipo === 'success' ? styles.successBox : styles.errorBox]}><Text style={alerta.tipo === 'success' ? styles.successText : styles.errorText}>{alerta.texto}</Text><TouchableOpacity onPress={() => setAlerta(null)}><Text style={styles.closeAlert}>Cerrar</Text></TouchableOpacity></View> : null}
       {mensaje ? <View style={styles.errorBox}><Text style={styles.errorText}>{mensaje}</Text><TouchableOpacity onPress={() => void cargar()}><Text style={styles.retry}>Reintentar</Text></TouchableOpacity></View> : null}
       {cargando ? <ActivityIndicator color="#72d34a" size="large" style={styles.loader} /> : <FlatList
         data={metodos}
@@ -143,5 +149,5 @@ export function MetodosPagoScreen() {
 }
 
 const styles = StyleSheet.create({
-  safeArea: { flex: 1, backgroundColor: '#0c110d' }, container: { flex: 1, paddingHorizontal: 20 }, header: { paddingTop: 22, paddingBottom: 20, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }, eyebrow: { color: '#72d34a', fontSize: 11, letterSpacing: 2, fontWeight: '800' }, title: { color: '#f4f7f3', fontSize: 28, fontWeight: '800', marginTop: 3 }, subtitle: { color: '#aeb7af', fontSize: 14, marginTop: 3 }, demoBadge: { color: '#72d34a', fontSize: 10, fontWeight: '800', letterSpacing: 1, marginTop: 6 }, addButton: { backgroundColor: '#72d34a', borderRadius: 10, paddingHorizontal: 13, paddingVertical: 10 }, addText: { color: '#10210e', fontWeight: '800', fontSize: 13 }, loader: { marginTop: 70 }, list: { paddingBottom: 28, gap: 12 }, emptyList: { flexGrow: 1, justifyContent: 'center', paddingBottom: 100 }, empty: { alignItems: 'center', backgroundColor: '#151c16', borderRadius: 16, borderWidth: 1, borderColor: '#283229', padding: 28 }, emptyTitle: { color: '#f4f7f3', fontSize: 18, fontWeight: '800' }, emptyText: { color: '#aeb7af', textAlign: 'center', marginTop: 8, lineHeight: 20 }, emptyButton: { marginTop: 20, borderWidth: 1, borderColor: '#72d34a', paddingHorizontal: 16, paddingVertical: 10, borderRadius: 9 }, emptyButtonText: { color: '#72d34a', fontWeight: '700' }, card: { backgroundColor: '#151c16', borderWidth: 1, borderColor: '#283229', borderRadius: 16, padding: 16 }, cardTop: { flexDirection: 'row' }, brandCircle: { width: 44, height: 44, borderRadius: 22, backgroundColor: '#233e1d', alignItems: 'center', justifyContent: 'center', marginRight: 12 }, brandLetter: { color: '#93eb70', fontSize: 20, fontWeight: '900' }, cardInfo: { flex: 1 }, cardType: { color: '#f4f7f3', fontSize: 16, fontWeight: '800' }, cardNumber: { color: '#c7cfc7', marginTop: 2, fontSize: 15, letterSpacing: 1.5 }, date: { color: '#879188', fontSize: 12, marginTop: 5 }, cardFooter: { borderTopWidth: 1, borderTopColor: '#283229', marginTop: 15, paddingTop: 11, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }, statusRow: { flexDirection: 'row', alignItems: 'center', gap: 7 }, status: { fontSize: 12, fontWeight: '800' }, statusActive: { color: '#8fe86f' }, statusInactive: { color: '#ed9b94' }, actions: { flexDirection: 'row', gap: 13 }, editAction: { color: '#b9dcae', fontSize: 13, fontWeight: '700' }, deleteAction: { color: '#ef8e87', fontSize: 13, fontWeight: '700' }, errorBox: { backgroundColor: '#3b1c1b', borderColor: '#743331', borderWidth: 1, borderRadius: 10, padding: 12, marginBottom: 12 }, errorText: { color: '#ffc0bb', lineHeight: 19 }, retry: { color: '#fff', fontWeight: '800', marginTop: 8 }, modalBackdrop: { flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(0,0,0,.62)' }, modal: { backgroundColor: '#151c16', borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 22, paddingBottom: 36 }, modalHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 22 }, modalTitle: { color: '#f4f7f3', fontWeight: '800', fontSize: 20 }, close: { color: '#aeb7af', fontWeight: '700' }, label: { color: '#d7dfd6', fontWeight: '700', marginBottom: 9 }, types: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 22 }, typeChip: { borderColor: '#3a463b', borderWidth: 1, borderRadius: 16, paddingVertical: 7, paddingHorizontal: 11 }, typeChipSelected: { backgroundColor: '#315c25', borderColor: '#72d34a' }, typeText: { color: '#b2bcb3', fontSize: 12, fontWeight: '700' }, typeTextSelected: { color: '#d9ffd0' }, input: { borderWidth: 1, borderColor: '#3a463b', borderRadius: 10, backgroundColor: '#0d120e', color: '#f4f7f3', padding: 14, fontSize: 16, marginBottom: 18 }, saveButton: { backgroundColor: '#72d34a', borderRadius: 10, alignItems: 'center', padding: 15 }, disabledButton: { opacity: .55 }, saveText: { color: '#10210e', fontWeight: '900', fontSize: 15 },
+  safeArea: { flex: 1, backgroundColor: '#0c110d' }, container: { flex: 1, paddingHorizontal: 20 }, header: { paddingTop: 22, paddingBottom: 20, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }, eyebrow: { color: '#72d34a', fontSize: 11, letterSpacing: 2, fontWeight: '800' }, title: { color: '#f4f7f3', fontSize: 28, fontWeight: '800', marginTop: 3 }, subtitle: { color: '#aeb7af', fontSize: 14, marginTop: 3 }, demoBadge: { color: '#72d34a', fontSize: 10, fontWeight: '800', letterSpacing: 1, marginTop: 6 }, addButton: { backgroundColor: '#72d34a', borderRadius: 10, paddingHorizontal: 13, paddingVertical: 10 }, addText: { color: '#10210e', fontWeight: '800', fontSize: 13 }, loader: { marginTop: 70 }, list: { paddingBottom: 28, gap: 12 }, emptyList: { flexGrow: 1, justifyContent: 'center', paddingBottom: 100 }, empty: { alignItems: 'center', backgroundColor: '#151c16', borderRadius: 16, borderWidth: 1, borderColor: '#283229', padding: 28 }, emptyTitle: { color: '#f4f7f3', fontSize: 18, fontWeight: '800' }, emptyText: { color: '#aeb7af', textAlign: 'center', marginTop: 8, lineHeight: 20 }, emptyButton: { marginTop: 20, borderWidth: 1, borderColor: '#72d34a', paddingHorizontal: 16, paddingVertical: 10, borderRadius: 9 }, emptyButtonText: { color: '#72d34a', fontWeight: '700' }, card: { backgroundColor: '#151c16', borderWidth: 1, borderColor: '#283229', borderRadius: 16, padding: 16 }, cardTop: { flexDirection: 'row' }, brandCircle: { width: 44, height: 44, borderRadius: 22, backgroundColor: '#233e1d', alignItems: 'center', justifyContent: 'center', marginRight: 12 }, brandLetter: { color: '#93eb70', fontSize: 20, fontWeight: '900' }, cardInfo: { flex: 1 }, cardType: { color: '#f4f7f3', fontSize: 16, fontWeight: '800' }, cardNumber: { color: '#c7cfc7', marginTop: 2, fontSize: 15, letterSpacing: 1.5 }, date: { color: '#879188', fontSize: 12, marginTop: 5 }, cardFooter: { borderTopWidth: 1, borderTopColor: '#283229', marginTop: 15, paddingTop: 11, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }, statusRow: { flexDirection: 'row', alignItems: 'center', gap: 7 }, status: { fontSize: 12, fontWeight: '800' }, statusActive: { color: '#8fe86f' }, statusInactive: { color: '#ed9b94' }, actions: { flexDirection: 'row', gap: 13 }, editAction: { color: '#b9dcae', fontSize: 13, fontWeight: '700' }, deleteAction: { color: '#ef8e87', fontSize: 13, fontWeight: '700' }, alertBox: { borderWidth: 1, borderRadius: 10, padding: 12, marginBottom: 12 }, successBox: { backgroundColor: '#18351b', borderColor: '#3e8c40' }, successText: { color: '#b5f2a5', lineHeight: 19 }, closeAlert: { color: '#fff', fontWeight: '800', marginTop: 8 }, errorBox: { backgroundColor: '#3b1c1b', borderColor: '#743331', borderWidth: 1, borderRadius: 10, padding: 12, marginBottom: 12 }, errorText: { color: '#ffc0bb', lineHeight: 19 }, retry: { color: '#fff', fontWeight: '800', marginTop: 8 }, modalBackdrop: { flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(0,0,0,.62)' }, modal: { backgroundColor: '#151c16', borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 22, paddingBottom: 36 }, modalHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 22 }, modalTitle: { color: '#f4f7f3', fontWeight: '800', fontSize: 20 }, close: { color: '#aeb7af', fontWeight: '700' }, label: { color: '#d7dfd6', fontWeight: '700', marginBottom: 9 }, types: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 22 }, typeChip: { borderColor: '#3a463b', borderWidth: 1, borderRadius: 16, paddingVertical: 7, paddingHorizontal: 11 }, typeChipSelected: { backgroundColor: '#315c25', borderColor: '#72d34a' }, typeText: { color: '#b2bcb3', fontSize: 12, fontWeight: '700' }, typeTextSelected: { color: '#d9ffd0' }, input: { borderWidth: 1, borderColor: '#3a463b', borderRadius: 10, backgroundColor: '#0d120e', color: '#f4f7f3', padding: 14, fontSize: 16, marginBottom: 18 }, saveButton: { backgroundColor: '#72d34a', borderRadius: 10, alignItems: 'center', padding: 15 }, disabledButton: { opacity: .55 }, saveText: { color: '#10210e', fontWeight: '900', fontSize: 15 },
 });
