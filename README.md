@@ -182,3 +182,13 @@ No subas `.env`, `.venv`, `frontend/node_modules`, `frontend/dist`, logs ni arch
 - Panel administrativo.
 
 Proyecto académico desarrollado en el programa ADSO del SENA.
+
+## Aplicación React Native y web
+
+La carpeta `react-native-metodos-pago/` es un proyecto Expo independiente para administrar métodos de pago en Android, iOS y navegador.
+
+```powershell
+cd react-native-metodos-pago
+npm install
+npm run web
+```
