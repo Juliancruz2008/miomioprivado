@@ -31,7 +31,6 @@ export function MetodosPagoScreen() {
   const cargar = useCallback(async (esRefresco = false) => {
     esRefresco ? setRefrescando(true) : setCargando(true);
     setMensaje('');
-    setAlerta(null);
     try {
       setModoDemo(await estaEnModoDemo());
       setMetodos(await listarMetodosPago());
@@ -49,34 +48,35 @@ export function MetodosPagoScreen() {
   const abrirNuevo = () => {
     setEditando(null);
     setForm(formInicial);
-    setModalVisible(true);
+    setModalVisible(true); //muestra en la pantalla
   };
 
   // Abre el formulario con los datos actuales para UPDATE.
   const abrirEdicion = (metodo: MetodoPago) => {
-    setEditando(metodo);
+    setEditando(metodo); //Guardo esa tarjeta para saber cuál es su ID.
     setForm({ tipo: metodo.tipo, numero: metodo.numero });
-    setModalVisible(true);
+    setModalVisible(true); //muestra en la pantalla
   };
 
   // CREATE o UPDATE, según exista un método seleccionado.
-  const guardar = async () => {
-    const numero = form.numero.trim();
-    if (numero.replace(/\s/g, '').length < 4) {
+  const guardar = async () => { //se crea la función asíncrona porque se conecta a la API.
+    const numero = form.numero.trim(); //Le quita los espacios al inicio y al final al número.
+    if (numero.replace(/\s/g, '').length < 4) { //revisa que tenga mínimo 4 dígitos.
       setAlerta({ tipo: 'error', texto: 'Ingresa al menos cuatro dígitos para el número o cuenta.' });
-      return;
+      return; //se detiene la función aquí para que no mande nada a la base de datos.
     }
+    setAlerta(null);
     setGuardando(true);
     try {
-      if (editando) await actualizarMetodoPago(editando.id, { tipo: form.tipo, numero });
-      else await crearMetodoPago({ tipo: form.tipo, numero, estado: true });
+      if (editando) await actualizarMetodoPago(editando.id, { tipo: form.tipo, numero }); //Si había algo en editando, actualizo ese registro usando su ID.
+      else await crearMetodoPago({ tipo: form.tipo, numero, estado: true }); //creo uno nuevo activo por defecto (estado: true).
       setModalVisible(false);
       setAlerta({ tipo: 'success', texto: editando ? 'Método actualizado correctamente.' : 'Método agregado correctamente.' });
-      await cargar();
-    } catch (error) {
+      await cargar(); //Vuelve a pedir los datos a la base de datos para mostrar la lista actualizada.
+    } catch (error) { //Si ocurrió un error en la API lo encerramos que el sistema no falle
       setAlerta({ tipo: 'error', texto: error instanceof Error ? error.message : 'No se pudo guardar el método.' });
-    } finally {
-      setGuardando(false);
+    } finally { //Esto se ejecuta siempre, salga bien o salga mal.
+      setGuardando(false); //Vuelvo a activar el botón de guardar.
     }
   };
 
@@ -94,6 +94,7 @@ export function MetodosPagoScreen() {
   };
 
   const eliminar = async (metodo: MetodoPago) => {
+    setAlerta(null);
     try {
       await eliminarMetodoPago(metodo.id);
       setAlerta({ tipo: 'success', texto: 'Método eliminado correctamente.' });
@@ -105,6 +106,7 @@ export function MetodosPagoScreen() {
 
   // UPDATE parcial: solo cambia el campo estado.
   const cambiarEstado = async (metodo: MetodoPago) => {
+    setAlerta(null);
     try {
       await actualizarMetodoPago(metodo.id, { estado: !metodo.estado });
       setAlerta({ tipo: 'success', texto: `Método ${metodo.estado ? 'desactivado' : 'activado'} correctamente.` });
