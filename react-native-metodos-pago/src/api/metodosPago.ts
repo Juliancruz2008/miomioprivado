@@ -2,7 +2,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Platform } from 'react-native';
 
 // 10.0.2.2 apunta al equipo host desde Android Emulator; el navegador necesita localhost.
-const API_URL = process.env.EXPO_PUBLIC_API_URL ?? (Platform.OS === 'web' ? 'http://127.0.0.1:8000' : 'http://10.0.2.2:8000');
+const DEFAULT_API_URL = Platform.OS === 'web' ? 'http://127.0.0.1:8000' : 'http://10.0.2.2:8000';
+const API_URL = (process.env.EXPO_PUBLIC_API_URL?.trim() || DEFAULT_API_URL).replace(/\/$/, '');
 const TOKEN_KEY = 'ev_token';
 const DEMO_KEY = 'ev_charge_demo_metodos_pago';
 // El modo demo se activa solo si no hay sesión. Se puede desactivar al publicar con EXPO_PUBLIC_DEMO_MODE=false.
