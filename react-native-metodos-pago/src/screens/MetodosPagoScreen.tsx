@@ -15,6 +15,7 @@ function fechaLocal(fecha: string) {
 }
 
 export function MetodosPagoScreen() {
+  // Estado de la pantalla: datos, carga, formulario y método en edición.
   const [metodos, setMetodos] = useState<MetodoPago[]>([]);
   const [cargando, setCargando] = useState(true);
   const [refrescando, setRefrescando] = useState(false);
@@ -25,6 +26,7 @@ export function MetodosPagoScreen() {
   const [form, setForm] = useState(formInicial);
   const [modoDemo, setModoDemo] = useState(false);
 
+  // READ: carga los métodos desde PostgreSQL o desde el modo demo.
   const cargar = useCallback(async (esRefresco = false) => {
     esRefresco ? setRefrescando(true) : setCargando(true);
     setMensaje('');
@@ -41,18 +43,21 @@ export function MetodosPagoScreen() {
 
   useEffect(() => { void cargar(); }, [cargar]);
 
+  // Abre el formulario vacío para CREATE.
   const abrirNuevo = () => {
     setEditando(null);
     setForm(formInicial);
     setModalVisible(true);
   };
 
+  // Abre el formulario con los datos actuales para UPDATE.
   const abrirEdicion = (metodo: MetodoPago) => {
     setEditando(metodo);
     setForm({ tipo: metodo.tipo, numero: metodo.numero });
     setModalVisible(true);
   };
 
+  // CREATE o UPDATE, según exista un método seleccionado.
   const guardar = async () => {
     const numero = form.numero.trim();
     if (numero.replace(/\s/g, '').length < 4) {
@@ -72,6 +77,7 @@ export function MetodosPagoScreen() {
     }
   };
 
+  // DELETE después de confirmar la acción.
   const confirmarEliminacion = (metodo: MetodoPago) => {
     const texto = `Se eliminará ${metodo.tipo} terminado en ${ultimosCuatro(metodo.numero)}.`;
     if (Platform.OS === 'web') {
@@ -93,6 +99,7 @@ export function MetodosPagoScreen() {
     }
   };
 
+  // UPDATE parcial: solo cambia el campo estado.
   const cambiarEstado = async (metodo: MetodoPago) => {
     try {
       await actualizarMetodoPago(metodo.id, { estado: !metodo.estado });
@@ -102,6 +109,7 @@ export function MetodosPagoScreen() {
     }
   };
 
+  // Interfaz visual de la pantalla.
   return <SafeAreaView style={styles.safeArea}>
     <View style={styles.container}>
       <View style={styles.header}>
