@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" role="img" aria-labelledby="title desc">
+  <title id="title">Llanta para vehículo eléctrico</title><desc id="desc">Ilustración de una llanta deportiva sobre fondo oscuro verde.</desc>
+  <defs><radialGradient id="bg"><stop stop-color="#173b19"/><stop offset="1" stop-color="#0d1110"/></radialGradient><linearGradient id="rubber" x2="1" y2="1"><stop stop-color="#4b5352"/><stop offset=".45" stop-color="#111516"/><stop offset="1" stop-color="#66706d"/></linearGradient></defs>
+  <rect width="800" height="600" rx="28" fill="url(#bg)"/><ellipse cx="400" cy="510" rx="245" ry="32" fill="#071008" opacity=".8"/>
+  <g transform="rotate(-18 400 300)"><ellipse cx="400" cy="300" rx="190" ry="245" fill="url(#rubber)" stroke="#8a9691" stroke-width="8"/><ellipse cx="400" cy="300" rx="130" ry="180" fill="#171c1c" stroke="#a5aaa5" stroke-width="8"/><ellipse cx="400" cy="300" rx="83" ry="116" fill="#303938" stroke="#d7dad5" stroke-width="5"/>
+  <g fill="#b8c2bc" stroke="#252b2b" stroke-width="5"><path d="M400 184l28 91-28 25-28-25z"/><path d="M486 228l-53 77-36-6 6-36z"/><path d="M490 377l-89-30-12-35 36-6z"/><path d="M314 377l53-77 36 6-6 36z"/><path d="M310 228l89 30 12 35-36 6z"/></g><circle cx="400" cy="300" r="31" fill="#171c1c" stroke="#39d114" stroke-width="7"/><circle cx="400" cy="300" r="9" fill="#d9f7d2"/></g>
+  <path d="M88 90h190" stroke="#39d114" stroke-width="5"/><text x="88" y="130" fill="#8fea78" font-family="Arial,sans-serif" font-size="24" font-weight="700" letter-spacing="4">EV PERFORMANCE</text>
+</svg>

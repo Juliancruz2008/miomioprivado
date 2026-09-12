@@ -1,0 +1,391 @@
+/* dashboard_usuario.css — Estilos específicos del dashboard */
+
+:root {
+  --font-title: 'Montserrat', sans-serif;
+  --font-subtitle: 'Raleway', sans-serif;
+  --font-body: 'Nunito', sans-serif;
+  --text-muted: rgba(240,237,230,0.55);
+  --green-ev: #39a900;
+  --border: rgba(255,255,255,0.08);
+  --text-dim: #999;
+  --bg2: #111;
+  --bg3: #161616;
+  --dim: #999;
+  --muted: #666;
+  --green: #39a900;
+  --text: #e0e0e0;
+}
+
+/* ── LAYOUT ── */
+body {
+  font-family: var(--font-body);
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--text);
+}
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-title);
+}
+.eyebrow, .subtitle, .label, .box-title, .badge, .pill, .auth-tab, .filter-pill {
+  font-family: var(--font-subtitle);
+}
+
+/* Sidebar fijo */
+#admin-sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  z-index: 100;
+  width: var(--sidebar, 220px);
+  background: var(--bg2);
+  border-right: 1px solid var(--border);
+}
+#admin-content {
+  margin-left: var(--sidebar, 220px);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  width: calc(100% - var(--sidebar, 220px));
+}
+
+/* ===== El resto de estilos (KPI, tablas, formularios) se mantienen igual ===== */
+.kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 14px;
+    margin-bottom: 24px;
+}
+.kpi-card {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+.kpi-icon { font-size: 22px; margin-bottom: 8px; }
+.kpi-num {
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--green);
+    line-height: 1;
+    font-family: var(--font-title);
+}
+.kpi-label {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 6px;
+    font-family: var(--font-body);
+}
+
+.inline-form {
+    background: #1a1a1a;
+    padding: 16px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    margin-bottom: 16px;
+    display: none;
+}
+.inline-form .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+.inline-form .form-grid .full {
+    grid-column: 1 / -1;
+}
+.inline-form label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--dim);
+    display: block;
+    margin-bottom: 4px;
+    font-family: var(--font-subtitle);
+}
+.inline-form input, .inline-form select, .inline-form textarea {
+    width: 100%;
+    padding: 8px 10px;
+    background: #0d0d0d;
+    border: 1px solid #333;
+    border-radius: 4px;
+    color: #fff;
+    font-size: 13px;
+    font-family: var(--font-body);
+}
+.btn-form {
+    padding: 8px 20px;
+    background: #39a900;
+    border: none;
+    color: #fff;
+    border-radius: 4px;
+    font-weight: 700;
+    cursor: pointer;
+    font-size: 13px;
+    font-family: var(--font-body);
+    transition: background 0.2s;
+}
+.btn-form:hover { background: #2c8200; }
+.btn-form.cancel { background: #555; }
+.btn-form.cancel:hover { background: #444; }
+
+.badge-tipo {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 4px;
+    background: rgba(231,76,60,0.1);
+    color: #e74c3c;
+    border: 1px solid rgba(231,76,60,0.2);
+    text-transform: capitalize;
+    font-family: var(--font-subtitle);
+}
+.badge-estado {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 4px;
+    text-transform: capitalize;
+    font-family: var(--font-subtitle);
+}
+.badge-estado.resuelto,
+.badge-estado.activa {
+    background: rgba(57,169,0,0.1);
+    color: var(--green);
+    border: 1px solid rgba(57,169,0,0.2);
+}
+.badge-estado.abierto,
+.badge-estado.cancelada {
+    background: rgba(231,76,60,0.1);
+    color: #e74c3c;
+    border: 1px solid rgba(231,76,60,0.2);
+}
+
+.btn-tbl {
+    padding: 4px 10px;
+    border-radius: 5px;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--dim);
+    transition: all 0.15s;
+    font-family: var(--font-body);
+}
+.btn-tbl:hover { border-color: rgba(255,255,255,0.2); color: var(--text); }
+.btn-tbl.danger:hover { border-color: #e74c3c; color: #e74c3c; }
+
+.activity-box {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+}
+.res-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+}
+.res-row:last-child { border-bottom: none; }
+.res-fecha {
+    font-size: 11px;
+    color: var(--muted);
+    white-space: nowrap;
+    font-family: var(--font-body);
+}
+
+.admin-form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    background: #1a1a1a;
+    padding: 20px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    margin-bottom: 24px;
+}
+.admin-form-grid .full-width { grid-column: 1 / -1; }
+.admin-form-grid label {
+    display: block;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--dim);
+    margin-bottom: 6px;
+    letter-spacing: 0.07em;
+    font-family: var(--font-subtitle);
+}
+.admin-form-grid input, .admin-form-grid select {
+    width: 100%;
+    padding: 10px 12px;
+    background: #0d0d0d;
+    border: 1px solid #333;
+    border-radius: 6px;
+    color: #fff;
+    font-size: 13px;
+    outline: none;
+    font-family: var(--font-body);
+}
+.btn-save-estacion {
+    padding: 10px 24px;
+    background: #39a900;
+    border: none;
+    color: #fff;
+    border-radius: 6px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s;
+    font-size: 13px;
+    width: auto;
+    font-family: var(--font-body);
+}
+.btn-save-estacion:hover { background: #2c8200; }
+
+/* ── Responsive ──────────────────────────────────────────── */
+@media (max-width: 900px) {
+    .kpi-grid { grid-template-columns: repeat(3, 1fr); }
+    .admin-form-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 600px) {
+    .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+    .inline-form .form-grid { grid-template-columns: 1fr; }
+}
+
+/* ── Perfil (estilos unificados con admin) ── */
+.info-grid {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+.info-grid .info-card {
+    flex: 1 1 calc(50% - 16px);
+    min-width: 200px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+}
+.info-card .label {
+    font-size: 11px;
+    color: var(--dim);
+    text-transform: uppercase;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    font-family: var(--font-subtitle);
+}
+.info-card .value {
+    font-size: 18px;
+    font-weight: 600;
+    margin-top: 4px;
+    font-family: var(--font-title);
+}
+@media (max-width: 600px) {
+    .info-grid .info-card {
+        flex: 1 1 100%;
+    }
+}
+
+/* ==================== FOOTER ESTILOS ==================== */
+.footer {
+  background: #090909;
+  border-top: 1px solid var(--border);
+  margin-top: auto;
+  margin-left: var(--sidebar, 220px);
+  width: calc(100% - var(--sidebar, 220px));
+}
+.footer-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 22px clamp(20px, 3vw, 40px) 18px;
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 18px;
+}
+.footer-logo {
+  height: 34px;
+  width: auto;
+  margin-bottom: 10px;
+  display: block;
+}
+.footer-brand p {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.6;
+  font-family: var(--font-body);
+}
+.footer-title {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 9px;
+  font-family: var(--font-subtitle);
+}
+.footer-links {
+  display: flex;
+  flex-direction: column;
+}
+.footer-links a {
+  text-decoration: none;
+  font-size: 12px;
+  color: var(--text-muted);
+  padding: 3px 0;
+  transition: color 0.2s;
+  font-family: var(--font-body);
+}
+.footer-links a:hover {
+  color: var(--green-ev);
+}
+.footer-bottom {
+  border-top: 1px solid var(--border);
+  padding: 9px clamp(20px, 3vw, 40px);
+  text-align: center;
+}
+.footer-bottom p {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-family: var(--font-body);
+}
+
+/* ============================================================
+   CORRECCIÓN: ICONO DEL CALENDARIO BLANCO
+   ============================================================ */
+#admin-content input[type="datetime-local"] {
+    color-scheme: dark;
+    background: #1e1e1e; /* Fondo más claro para que el icono se vea */
+    border: 1px solid #444;
+    border-radius: 6px;
+    padding: 10px 12px;
+    color: #fff;
+}
+#admin-content input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+    filter: invert(1) brightness(100%);
+    cursor: pointer;
+}
+#admin-content input[type="datetime-local"]::-moz-calendar-picker-indicator {
+    filter: invert(1) brightness(100%);
+    cursor: pointer;
+}
+/* Para inputs readonly (fin de reserva) mantener el fondo oscuro */
+#admin-content input[type="datetime-local"][readonly] {
+    background: #2a2a2a;
+    opacity: 0.8;
+}

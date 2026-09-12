@@ -1,0 +1,15 @@
+{
+  "expo": {
+    "name": "EV Charge Pagos",
+    "slug": "ev-charge-metodos-pago",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "dark",
+    "android": {
+      "package": "com.evcharge.metodospago"
+    },
+    "plugins": [
+      "expo-status-bar"
+    ]
+  }
+}
