@@ -66,7 +66,7 @@ async function guardarDemo(metodos: MetodoPago[]) {
   return metodos;
 }
 
-async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
+async function request<T>(path: string, options: RequestInit = {}, retryDemo = true): Promise<T> {
   const token = await AsyncStorage.getItem(TOKEN_KEY);
   if (!token) throw new Error('No hay una sesión activa. Inicia sesión antes de administrar tus métodos de pago.');
 
@@ -79,6 +79,12 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
       ...options.headers,
     },
   });
+
+  if (response.status === 401 && DEMO_MODE && retryDemo) {
+    // El JWT demo puede haber expirado mientras la pestaña seguía abierta.
+    await AsyncStorage.removeItem(TOKEN_KEY);
+    if (await iniciarSesionDemo()) return request<T>(path, options, false);
+  }
 
   if (!response.ok) {
     const body = await response.json().catch(() => null) as { detail?: string } | null;
